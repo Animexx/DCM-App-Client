@@ -1,0 +1,16 @@
+<ion-view title="Wettbewerbe">
+    <ion-content class="has-header">
+        <ion-list>
+            <ion-item ng-repeat="competition in competitions" type="item-text-wrap" href="#/tab/competitions/{{competition.id}}">
+                {{competition.name}}
+            </ion-item>
+        </ion-list>
+
+        <br><br><br>
+
+        <button class="button button-light" data-ng-click="logout()">
+            Ausloggen
+        </button>
+
+    </ion-content>
+</ion-view>

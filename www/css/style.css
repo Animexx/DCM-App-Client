@@ -1,0 +1,34 @@
+.participant_card {
+    width: 100%;
+}
+
+.participant_card td {
+    text-align: left;
+}
+
+.participant_card th {
+    width: 33%;
+    text-align: left;
+}
+
+.ratings_setter .rating_na {
+    float: right;
+    font-weight: normal;
+    color: gray;
+    font-style: italic;
+}
+
+.ratings_setter .rating_num {
+    float: right;
+    width: 23px;
+    height: 23px;
+    margin-top: -2px;
+    margin-bottom: -2px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 23px;
+    font-size: 150%;
+    display: inline-block;
+    background-color: #c3c3ff;
+    border-radius: 7px;
+}

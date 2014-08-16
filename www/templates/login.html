@@ -1,0 +1,23 @@
+<ion-view title="Login">
+    <ion-content has-header="true" padding="true">
+
+        <label class="item item-input">
+            <span class="input-label">Benutzername</span>
+            <input type="text" data-ng-model="login.username">
+        </label>
+
+        <label class="item item-input">
+            <span class="input-label">Passwort</span>
+            <input type="password" data-ng-model="login.password">
+        </label>
+
+        <br>
+
+        <div style="float: right;">
+            <button class="button button-balanced" data-ng-click="doLogin(login.username, login.password)">
+                Weiter
+            </button>
+        </div>
+
+    </ion-content>
+</ion-view>
