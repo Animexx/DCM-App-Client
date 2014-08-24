@@ -2,9 +2,10 @@ angular.module('starter.services', ['ngResource'])
 
     .factory('LoginService', ['Base64', '$http', function (Base64, $http) {
         var currentUsername = (typeof(localStorage.dcm_username) != "undefined" ? localStorage.dcm_username : null),
-            currentPassword = (typeof(localStorage.dcm_password) != "undefined" ? localStorage.dcm_password : null);
+            currentPassword = (typeof(localStorage.dcm_password) != "undefined" ? localStorage.dcm_password : null),
+            currentId = (typeof(localStorage.dcm_user_id) != "undefined" ? localStorage.dcm_user_id : null);
 
-        if (currentUsername && currentPassword) {
+        if (currentUsername && currentPassword && currentId) {
             var encoded = Base64.encode(currentUsername + ':' + currentPassword);
             $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
         }
@@ -13,8 +14,23 @@ angular.module('starter.services', ['ngResource'])
             login: function (username, password) {
                 localStorage.dcm_username = currentUsername = username;
                 localStorage.dcm_password = currentPassword = password;
+                localStorage.dcm_user_id = null;
+
                 var encoded = Base64.encode(username + ':' + password);
                 $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
+
+                $http({
+                    method: "get",
+                    url: window.DCM_REST_BASE + "me",
+                    params: {},
+                    data: {}
+                }).then(function (data) {
+                    var ret = data["data"];
+                    localStorage.dcm_user_id = currentId = ret["user_id"];
+                }, function (err) {
+                    console.log("Fehler"); // @TODO
+                    alert("Ein Fehler beim Login");
+                });
             },
             logout: function () {
                 currentUsername = localStorage.dcm_username = null;
@@ -23,8 +39,11 @@ angular.module('starter.services', ['ngResource'])
             isLoggedIn: function () {
                 return (currentUsername !== null && currentPassword !== null);
             },
-            currentUser: function () {
+            currentUsername: function () {
                 return currentUsername;
+            },
+            currentUserId: function () {
+                return currentId;
             }
         }
     }])
@@ -49,6 +68,14 @@ angular.module('starter.services', ['ngResource'])
                 query: {method: 'GET', params: {}, isArray: false}
             });
         }])
+
+    .factory('ParticipantRatingService', ['$resource',
+        function ($resource) {
+            return $resource(window.DCM_REST_BASE + 'group/:competitionGroupId/competition/:competitionId/participant/:participantId/rating/:adjucatorId', {}, {
+                query: {method: 'GET', params: {}, isArray: false}
+            });
+        }])
+
 
 /**
  * A simple example service that returns some data.
