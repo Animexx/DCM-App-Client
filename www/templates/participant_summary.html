@@ -1,0 +1,23 @@
+<ion-view title="{{competition.name}}">
+    <ion-content has-header="true" padding="true">
+
+        <table class="participant_rating_table">
+            <caption>{{participant.name}}</caption>
+            <thead>
+            <tr>
+                <th class="lo"></th>
+                <th data-ng-repeat="adjucator in adjucators">{{adjucator.username}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="criterion in criteria">
+                <th>{{criterion.name}}</th>
+                <td data-ng-repeat="adjucator in adjucators" class="rating">
+                    {{criterion.ratings[adjucator.adjucator_id]}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </ion-content>
+</ion-view>

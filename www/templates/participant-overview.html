@@ -33,7 +33,17 @@
             </div>
         </div>
 
-
+        <div data-ng-switch data-on="admin">
+            <div data-ng-switch-when="1">
+                <div style="float: right;">
+                    <a class="button button-balanced icon-right ion-chevron-right" href="#/tab/competitions/{{competitionId}}/participant/{{participantId}}/summary">
+                        Gesamtauswertung
+                    </a>
+                </div>
+            </div>
+            <div data-ng-switch-default>
+            </div>
+        </div>
         <h2>Deine Wertung</h2>
 
         <div class="ratings_setter card">

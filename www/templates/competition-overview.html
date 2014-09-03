@@ -4,11 +4,27 @@
 
         <br><br>
 
+
+
+
         <h2>TeilnehmerInnen</h2>
+
+        <br style="clear: both;">
 
         <ion-list>
             <ion-item ng-repeat="participant in participants" type="item-text-wrap" href="#/tab/competitions/{{competition.id}}/participant/{{participant.user_id}}">
                 {{participant.name}}
+
+                <div data-ng-switch data-on="participant.i_rated">
+                    <div data-ng-switch-when="1">
+                        <span class="badge badge-balanced">Abgestimmt</span>
+                    </div>
+                    <div data-ng-switch-when="-1">
+                        <span class="badge badge-energized">Unvollständig</span>
+                    </div>
+                    <div data-ng-switch-default>
+                    </div>
+                </div>
             </ion-item>
         </ion-list>
         <!--

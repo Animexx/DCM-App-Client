@@ -73,6 +73,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
                 }
             })
 
+            .state('tab.participant_summary', {
+                url: '/competitions/:competitionId/participant/:participantId/summary',
+                views: {
+                    'tab-competitions': {
+                        templateUrl: 'templates/participant_summary.html',
+                        controller: 'ParticipantSummaryCtrl'
+                    }
+                }
+            })
+
             .state('tab.account', {
                 url: '/account',
                 views: {

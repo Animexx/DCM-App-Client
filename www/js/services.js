@@ -71,6 +71,13 @@ angular.module('starter.services', ['ngResource'])
             });
         }])
 
+    .factory('AdjucatorService', ['$resource',
+        function ($resource) {
+            return $resource(window.DCM_REST_BASE + 'group/:competitionGroupId/competition/:competitionId/adjucator/:adjucatorId', {}, {
+                query: {method: 'GET', params: {}, isArray: false}
+            });
+        }])
+
     .factory('CriterionService', ['$resource',
         function ($resource) {
             return $resource(window.DCM_REST_BASE + 'group/:competitionGroupId/criterion/:criterionId', {}, {

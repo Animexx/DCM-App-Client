@@ -32,3 +32,32 @@
     background-color: #c3c3ff;
     border-radius: 7px;
 }
+
+.participant_rating_table {
+    width: 100%;
+    border-spacing: 2px;
+    border-collapse: separate;
+}
+.participant_rating_table caption {
+    font-size: 200%;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+.participant_rating_table thead th {
+    background-color: #e0e0ff;
+    padding: 4px;
+}
+.participant_rating_table tbody th {
+    background-color: #e0e0ff;
+    width: 20%;
+    padding: 4px;
+}
+.participant_rating_table th.lo {
+    background-color: transparent;
+}
+.participant_rating_table tbody td {
+    font-weight: bold;
+    text-align: center;
+    font-size: 150%;
+}
