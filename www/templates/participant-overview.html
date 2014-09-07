@@ -15,24 +15,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col" data-ng-repeat="member in members">
-                <div class="card">
-                    <div class="item item-divider">
-                        {{member.name}}
-                    </div>
-                    <div class="item item-text-wrap">
-                        <table class="participant_card">
-                            <tr data-ng-repeat="prop in member">
-                                <th>{{prop[0]}}</th>
-                                <td>{{prop[1]}}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div data-ng-switch data-on="admin">
             <div data-ng-switch-when="1">
                 <div style="float: right;">
@@ -44,23 +26,67 @@
             <div data-ng-switch-default>
             </div>
         </div>
-        <h2>Deine Wertung</h2>
 
-        <div class="ratings_setter card">
-            <section data-ng-repeat="criterion in criteria">
-                <div class="item item-divider">
-                    <div class="rating_na" style="display: {{(ratings[criterion.id] > 0 ? 'none' : 'inherit')}}">- nicht gesetzt -</div>
-                    <div class="rating_num" style="display: {{(ratings[criterion.id] > 0 ? 'inherit' : 'none')}}">{{ratings[criterion.id]}}</div>
-                    <div class="rating_name">{{criterion.name}}</div>
-                </div>
-                <div class="item">
-                    <div class="range">
-                        <i class="icon ion-volume-low"></i>
-                        <input type="range" name="criterion[{{criterion.id}}]" min="0" max="{{criterion.max_rating}}" data-ng-model="ratings[criterion.id]" data-ng-change="saveRatings()">
-                        <i class="icon ion-volume-high"></i>
+        <div class="row">
+            <div class="col" data-ng-repeat="member in members">
+                <div class="card">
+                    <div class="item item-divider">
+                        {{member.name}}
+                    </div>
+                    <div class="item item-text-wrap">
+                        <table class="participant_card">
+                            <tr data-ng-repeat="prop in member.props">
+                                <th>{{prop[0]}}</th>
+                                <td>{{prop[1]}}</td>
+                            </tr>
+                        </table>
+                        <br>
+
+                        <button class="button button-calm" style="float: left;" data-ng-click="setOpenedCritGroup(member.group_auftritt)">
+                            Auftritt
+                        </button>
+
+                        <button class="button button-calm" style="float: right;" data-ng-click="setOpenedCritGroup(member.group_kostuem)">
+                            Kostüm
+                        </button>
+                        <br style="clear: both;">
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
+
+        <section data-ng-repeat="crit_group in crit_groups" class="crit_group crit_group_{{crit_group.group_id}}" data-ng-show="openedCritGroup == crit_group.group_id">
+            <h2>{{crit_group.name}}</h2>
+
+            <div class="ratings_setter card">
+                <section data-ng-repeat="criterion in crit_group.crits">
+                    <div class="item item-divider">
+                        <div class="rating_na" style="display: {{(ratings[criterion.id] > 0 ? 'none' : 'inherit')}}">- nicht gesetzt -</div>
+                        <div class="rating_num" style="display: {{(ratings[criterion.id] > 0 ? 'inherit' : 'none')}}">{{ratings[criterion.id]}}</div>
+                        <div class="rating_name">{{criterion.name}}</div>
+                    </div>
+                    <div class="item">
+                        <div style="float: right;">
+                            <span style="display: inline-block; vertical-align: middle; line-height: 25px; margin-top: -20px;">Streicher</span>
+                            <label class="toggle toggle-assertive">
+                                <input type="checkbox" name="ignore_{{criterion.id}}" value="1" data-ng-model="criterion.ignore">
+
+                                <div class="track">
+                                    <div class="handle"></div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="rating_radio rating_val_{{val}}" data-ng-repeat="val in criterion.values" data-ng-show="criterion.ignore != 1">
+                            <label for="critinp{{criterion.id}}_{{val}}">{{val}}</label>
+                            <span></span>
+                            <input type="radio" id="critinp{{criterion.id}}_{{val}}" name="test_{{criterion.id}}" value="{{val}}"
+                                   data-ng-checked="{{val}} == ratings[criterion.id]">
+                            <span></span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
     </ion-content>
 </ion-view>

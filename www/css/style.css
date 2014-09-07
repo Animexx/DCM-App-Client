@@ -38,26 +38,149 @@
     border-spacing: 2px;
     border-collapse: separate;
 }
+
 .participant_rating_table caption {
     font-size: 200%;
     font-weight: bold;
     margin-bottom: 10px;
     margin-top: 20px;
 }
+
 .participant_rating_table thead th {
     background-color: #e0e0ff;
     padding: 4px;
 }
+
 .participant_rating_table tbody th {
     background-color: #e0e0ff;
     width: 20%;
     padding: 4px;
 }
+
 .participant_rating_table th.lo {
     background-color: transparent;
 }
+
 .participant_rating_table tbody td {
     font-weight: bold;
     text-align: center;
     font-size: 150%;
+}
+
+.rating_radio {
+    display: inline-block;
+    width: 40px;
+    height: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.rating_radio label {
+    display: none;
+}
+
+.rating_radio span {
+    position: absolute;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 27px;
+    padding: 3px;
+    color: #FFF;
+    text-align: center;
+    background: lightgray;
+}
+
+.rating_radio input {
+    position: absolute;
+    right: 0;
+    margin: 0;
+    width: 31px;
+    height: 31px;
+    /*hide the radio button*/
+    filter: alpha(opacity=0);
+    -moz-opacity: 0;
+    -khtml-opacity: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.rating_radio input[type="radio"] + span {
+    /*the span element that immediately follow the radio button */
+    visibility: hidden; /*temporarily hide the "YES" label*/
+    background: #5858ff;
+}
+
+
+.rating_radio input[type="radio"]:checked {
+    width: 30px;
+    background-color: lightgray;
+}
+
+.rating_radio input[type="radio"]:checked + span {
+    visibility: visible; /*show the "YES" label only if the radio button is checked*/
+}
+
+.rating_radio.rating_val_1 input[type="radio"] + span:after {
+content: "1"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_1 span:after {
+content: "1"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_2 input[type="radio"] + span:after {
+content: "2"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_2 span:after {
+content: "2"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_3 input[type="radio"] + span:after {
+content: "3"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_3 span:after {
+content: "3"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_4 input[type="radio"] + span:after {
+content: "4"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_4 span:after {
+content: "4"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_5 input[type="radio"] + span:after {
+content: "5"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_5 span:after {
+content: "5"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_6 input[type="radio"] + span:after {
+content: "6"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_6 span:after {
+content: "6"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_7 input[type="radio"] + span:after {
+content: "7"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_7 span:after {
+content: "7"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_8 input[type="radio"] + span:after {
+content: "8"; /*if CSS are disbled span elements are not displayed*/
+}
+
+.rating_radio.rating_val_8 span:after {
+content: "8"; /*if CSS are disbled span elements are not displayed*/
 }

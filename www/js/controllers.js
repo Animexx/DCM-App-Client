@@ -88,14 +88,22 @@ angular.module('starter.controllers', [])
                     for (var i in data) if (data.hasOwnProperty(i)) {
                         if (i == "members") {
                             for (var j = 0; j < data[i].length; j++) {
-                                $scope.members[j] = [];
+                                var member = {
+                                    "name": "[Nicht gefunden]",
+                                    "group_auftritt": j * 2 + 0,
+                                    "group_kostuem": j * 2 + 1,
+                                    "props": []
+                                };
                                 for (var k in data[i][j]) if (data[i][j].hasOwnProperty(k)) {
-                                    $scope.members[j].push([k, data[i][j][k]]);
+                                    if (k == "Name") member["name"] = "Teilnehmer " + (j + 1) + ": " + data[i][j][k];
+                                    else member["props"].push([k, data[i][j][k]]);
                                 }
+                                $scope.members[j] = member;
                             }
                         } else $scope.team_properties.push([i, data[i]]);
                     }
                 } catch (e) {
+                    console.log(e);
                     alert("Keine Eigenschaften gefunden");
                 }
             });
@@ -105,11 +113,26 @@ angular.module('starter.controllers', [])
         }).$promise.then(function (list) {
                 if (typeof(list._embedded) != "object") alert("Ein Fehler ist aufgetreten beim Laden der Kriterien.");
                 else {
-                    var criteria_id = [];
-                    $scope.criteria = list._embedded.competition_rating_criterion;
+                    var criteria_id = [],
+                        criteria_groups = [];
+                    //$scope.criteria = list._embedded.competition_rating_criterion;
                     for (var i = 0; i < list._embedded.competition_rating_criterion.length; i++) {
-                        criteria_id.push(list._embedded.competition_rating_criterion[i].id);
+                        var crit = list._embedded.competition_rating_criterion[i];
+                        crit["values"] = [];
+                        for (var j = 1; j <= crit["max_rating"]; j++) crit["values"].push(j);
+                        criteria_id.push(crit.id);
+                        if (typeof(criteria_groups[crit.group_id]) == "undefined") criteria_groups[crit.group_id] = {
+                            "group_id": crit.group_id,
+                            "name": "@TODO",
+                            "crits": []
+                        };
+                        if (crit.group_id == 0) criteria_groups[crit.group_id]["name"] = "Teilnehmer 1: Auftritt";
+                        if (crit.group_id == 1) criteria_groups[crit.group_id]["name"] = "Teilnehmer 1: Kostüm";
+                        if (crit.group_id == 2) criteria_groups[crit.group_id]["name"] = "Teilnehmer 2: Auftritt";
+                        if (crit.group_id == 3) criteria_groups[crit.group_id]["name"] = "Teilnehmer 2: Kostüm";
+                        criteria_groups[crit.group_id].crits.push(crit);
                     }
+                    $scope.crit_groups = criteria_groups;
 
                     ParticipantRatingService.get({
                         competitionGroupId: window.DCM_COMPETITION_GROUP,
@@ -123,7 +146,6 @@ angular.module('starter.controllers', [])
                                 $scope.ratings[criteria_id[j]] = val;
                             }
                             ratings_obj = ratings;
-                            console.log($scope.ratings);
                         });
                 }
             });
@@ -137,6 +159,11 @@ angular.module('starter.controllers', [])
                 adjucatorId: LoginService.currentUserId()
             });
         };
+
+        $scope.setOpenedCritGroup = function(group_id) {
+            $scope.openedCritGroup = group_id;
+        }
+        $scope.openedCritGroup = 0;
     })
 
     .controller('ParticipantSummaryCtrl', function ($scope, $interval, $stateParams, ParticipantService, CompetitionService, CriterionService, ParticipantRatingService, AdjucatorService) {
