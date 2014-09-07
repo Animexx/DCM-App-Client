@@ -66,7 +66,7 @@
                         <div class="rating_name">{{criterion.name}}</div>
                     </div>
                     <div class="item">
-                        <div style="float: right;">
+                        <div style="float: right;" data-ng-show="criterion.order > 1">
                             <span style="display: inline-block; vertical-align: middle; line-height: 25px; margin-top: -20px;">Streicher</span>
                             <label class="toggle toggle-assertive">
                                 <input type="checkbox" name="ignore_{{criterion.id}}" value="1" data-ng-model="criterion.ignore">
