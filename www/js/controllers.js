@@ -171,11 +171,24 @@ angular.module('starter.controllers', [])
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId
         });
-        $scope.participant = ParticipantService.get({
+        ParticipantService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId,
             participantId: $stateParams.participantId
-        });
+        }).$promise.then(function(part) {
+                $scope.participant = part;
+                var data = JSON.parse(part["data"]),
+                    members = data["members"],
+                    rating_group_names = {};
+                for (var i = 0; i < members.length; i++) {
+                    rating_group_names[i*2 + 0] = members[i]["Name"] + ": Kostüm";
+                    rating_group_names[i*2 + 1] = members[i]["Name"] + ": Auftritt";
+                }
+                console.log("Participant");
+                console.log(part);
+                $scope.crit_group_names = rating_group_names;
+                console.log(rating_group_names);
+            });
 
         var build_rating_table = function (criteria, adjucators, ratings) {
             console.log(criteria);
@@ -201,11 +214,13 @@ angular.module('starter.controllers', [])
                 }
             }
             for (i in criteria_by_id) if (criteria_by_id.hasOwnProperty(i)) {
-                criteria_by_pos[criteria_by_id[i]["order"]] = criteria_by_id[i];
+                crit = criteria_by_id[i];
+                if (typeof(criteria_by_pos[crit["group_id"]]) == "undefined") criteria_by_pos[crit["group_id"]] = {
+                    "group_id": crit["group_id"],
+                    "crits": {}
+                };
+                criteria_by_pos[crit["group_id"]]["crits"][crit["order"]] = crit;
             }
-
-            console.log(adjucators_by_id);
-            console.log(criteria_by_id);
 
             $scope.adjucators = adjucators_by_id;
             $scope.criteria = criteria_by_pos;

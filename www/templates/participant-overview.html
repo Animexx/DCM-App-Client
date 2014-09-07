@@ -81,7 +81,7 @@
                             <label for="critinp{{criterion.id}}_{{val}}">{{val}}</label>
                             <span></span>
                             <input type="radio" id="critinp{{criterion.id}}_{{val}}" name="test_{{criterion.id}}" value="{{val}}"
-                                   data-ng-checked="{{val}} == ratings[criterion.id]">
+                                   data-ng-model="ratings[criterion.id]" data-ng-change="saveRatings()">
                             <span></span>
                         </div>
                     </div>
