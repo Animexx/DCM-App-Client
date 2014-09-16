@@ -1,8 +1,8 @@
 <ion-view title="{{competition.name}}">
     <ion-content has-header="true" padding="true">
 
-        <table class="participant_rating_table" data-ng-repeat="crit_group in criteria">
-            <caption>{{crit_group_names[crit_group.group_id]}}</caption>
+        <table class="participant_rating_table" data-ng-repeat="crit_group in crit_groups">
+            <caption>{{crit_group.name}}</caption>
             <thead>
             <tr>
                 <th class="lo"></th>
@@ -10,10 +10,13 @@
             </tr>
             </thead>
             <tbody>
-            <tr data-ng-repeat="criterion in crit_group.crits">
+            <tr data-ng-repeat="criterion in crit_group.criteria">
                 <th>{{criterion.name}}</th>
                 <td data-ng-repeat="adjucator in adjucators" class="rating">
-                    {{criterion.ratings[adjucator.adjucator_id]}}
+                    <span class="streicher" style="display: {{ ratings[criterion.id][adjucator.adjucator_id] == -1 ? 'inline' : 'none' }}">Streicher</span>
+                    <span class="rating" style="display: {{ ratings[criterion.id][adjucator.adjucator_id] == -1 ? 'none' : 'inline' }}">
+                        {{ratings[criterion.id][adjucator.adjucator_id]}}
+                    </span>
                 </td>
             </tr>
             </tbody>

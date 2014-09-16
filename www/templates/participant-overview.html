@@ -27,6 +27,10 @@
             </div>
         </div>
 
+        <button class="button button-light meine_punktzahl icon-left {{ all_complete ? 'ion-checkmark-circled' : 'ion-help-circled' }}">
+            Meine Punktzahl: {{team_rating}}
+        </button>
+
         <div class="row">
             <div class="col" data-ng-repeat="member in members">
                 <div class="card">
@@ -42,12 +46,12 @@
                         </table>
                         <br>
 
-                        <button class="button button-calm" style="float: left;" data-ng-click="setOpenedCritGroup(member.group_auftritt)">
-                            Auftritt
+                        <button class="button {{ rating_groups_complete[member.group_auftritt] ? 'button-balanced' : 'button-energized' }}" style="float: left;" data-ng-click="setOpenedCritGroup(member.group_auftritt)">
+                            Auftritt ({{rating_groups_scores[member.group_auftritt]}})
                         </button>
 
-                        <button class="button button-calm" style="float: right;" data-ng-click="setOpenedCritGroup(member.group_kostuem)">
-                            Kostüm
+                        <button class="button {{ rating_groups_complete[member.group_kostuem] ? 'button-balanced' : 'button-energized' }}" style="float: right;" data-ng-click="setOpenedCritGroup(member.group_kostuem)">
+                            Kostüm ({{rating_groups_scores[member.group_kostuem]}})
                         </button>
                         <br style="clear: both;">
                     </div>
@@ -56,20 +60,21 @@
         </div>
 
         <section data-ng-repeat="crit_group in crit_groups" class="crit_group crit_group_{{crit_group.group_id}}" data-ng-show="openedCritGroup == crit_group.group_id">
-            <h2>{{crit_group.name}}</h2>
+            <h2>{{crit_group.name}} <span style="float: right;">{{rating_groups_scores[crit_group.group_id]}}</span> </h2>
 
             <div class="ratings_setter card">
-                <section data-ng-repeat="criterion in crit_group.crits">
+                <section data-ng-repeat="criterion in crit_group.criteria">
                     <div class="item item-divider">
                         <div class="rating_na" style="display: {{(ratings[criterion.id] > 0 ? 'none' : 'inherit')}}">- nicht gesetzt -</div>
                         <div class="rating_num" style="display: {{(ratings[criterion.id] > 0 ? 'inherit' : 'none')}}">{{ratings[criterion.id]}}</div>
+                        <div class="rating_weight" style="display: {{(criterion.group_leader ? 'inherit' : 'none')}}">{{rating_groups_weights[crit_group.group_id]}} x </div>
                         <div class="rating_name">{{criterion.name}}</div>
                     </div>
                     <div class="item">
-                        <div style="float: right;" data-ng-show="criterion.order > 1">
+                        <div style="float: right;" data-ng-show="criterion.group_leader === false">
                             <span style="display: inline-block; vertical-align: middle; line-height: 25px; margin-top: -20px;">Streicher</span>
                             <label class="toggle toggle-assertive">
-                                <input type="checkbox" name="ignore_{{criterion.id}}" value="1" data-ng-model="criterion.ignore">
+                                <input type="checkbox" name="ignore_{{criterion.id}}" value="1" data-ng-model="ratings_ignore[criterion.id]" data-ng-change="saveRatings()">
 
                                 <div class="track">
                                     <div class="handle"></div>
@@ -77,7 +82,7 @@
                             </label>
                         </div>
 
-                        <div class="rating_radio rating_val_{{val}}" data-ng-repeat="val in criterion.values" data-ng-show="criterion.ignore != 1">
+                        <div class="rating_radio rating_val_{{val}}" data-ng-repeat="val in criterion.values" data-ng-show="ratings_ignore[criterion.id] == false">
                             <label for="critinp{{criterion.id}}_{{val}}">{{val}}</label>
                             <span></span>
                             <input type="radio" id="critinp{{criterion.id}}_{{val}}" name="test_{{criterion.id}}" value="{{val}}"
