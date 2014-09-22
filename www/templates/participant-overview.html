@@ -31,7 +31,12 @@
             Meine Punktzahl: {{team_rating}}
         </button>
 
-        <div class="row">
+        <div class="row participant_overview_ratings">
+            <div class="auftritt_holder">
+                <button class="button {{ rating_groups_complete[group_auftritt] ? 'button-balanced' : 'button-energized' }}" style="float: left;" data-ng-click="setOpenedCritGroup(group_auftritt)">
+                    Auftritt ({{rating_groups_scores[group_auftritt]}})
+                </button>
+            </div>
             <div class="col" data-ng-repeat="member in members">
                 <div class="card">
                     <div class="item item-divider">
@@ -46,11 +51,7 @@
                         </table>
                         <br>
 
-                        <button class="button {{ rating_groups_complete[member.group_auftritt] ? 'button-balanced' : 'button-energized' }}" style="float: left;" data-ng-click="setOpenedCritGroup(member.group_auftritt)">
-                            Auftritt ({{rating_groups_scores[member.group_auftritt]}})
-                        </button>
-
-                        <button class="button {{ rating_groups_complete[member.group_kostuem] ? 'button-balanced' : 'button-energized' }}" style="float: right;" data-ng-click="setOpenedCritGroup(member.group_kostuem)">
+                        <button class="kostuem_button button {{ rating_groups_complete[member.group_kostuem] ? 'button-balanced' : 'button-energized' }}" data-ng-click="setOpenedCritGroup(member.group_kostuem)">
                             Kostüm ({{rating_groups_scores[member.group_kostuem]}})
                         </button>
                         <br style="clear: both;">

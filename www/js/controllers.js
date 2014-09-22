@@ -1,3 +1,5 @@
+"use strict";
+
 angular.module('starter.controllers', [])
 
     .controller('LoginCtrl', function ($scope, LoginService, $location) {
@@ -98,6 +100,7 @@ angular.module('starter.controllers', [])
         }).$promise.then(function (participant) {
                 $scope.members = [];
                 $scope.team_properties = [];
+                $scope.group_auftritt = 0;
                 try {
                     var data = JSON.parse(participant.data);
                     for (var i in data) if (data.hasOwnProperty(i)) {
@@ -105,8 +108,7 @@ angular.module('starter.controllers', [])
                             for (var j = 0; j < data[i].length; j++) {
                                 var member = {
                                     "name": "[Nicht gefunden]",
-                                    "group_auftritt": j * 2 + 0,
-                                    "group_kostuem": j * 2 + 1,
+                                    "group_kostuem": j + 1,
                                     "props": []
                                 };
                                 for (var k in data[i][j]) if (data[i][j].hasOwnProperty(k)) {
@@ -195,51 +197,46 @@ angular.module('starter.controllers', [])
 
         var build_rating_table = function (adjucators, ratings_unsorted) {
             var adjucators_by_id = {},
-                ratings_by_crit = {},
                 ratings = {},
-                i, j;
+                rating_warnings = {},
+                i;
 
             for (i in adjucators) if (adjucators.hasOwnProperty(i)) {
                 adjucators_by_id[adjucators[i]["adjucator_id"]] = adjucators[i];
             }
 
-            console.log("Unsorted");
-            console.log(ratings_unsorted);
             for (i in ratings_unsorted) if (ratings_unsorted.hasOwnProperty(i)) {
-                console.log(ratings_unsorted[i]);
-                console.log("Rating: " + ratings_unsorted[i].adjucator_id);
                 for (var crit_id in ratings_unsorted[i].ratings) if (ratings_unsorted[i].ratings.hasOwnProperty(crit_id)) {
-                    if (typeof(ratings[crit_id]) == "undefined") ratings[crit_id] = {};
-                    ratings[crit_id][ratings_unsorted[i].adjucator_id] = ratings_unsorted[i].ratings[crit_id];
+                    if (ratings_unsorted[i].ratings[crit_id] != 0) {
+                        if (typeof(ratings[crit_id]) == "undefined") ratings[crit_id] = {};
+                        ratings[crit_id][ratings_unsorted[i].adjucator_id] = ratings_unsorted[i].ratings[crit_id];
+                    }
                 }
             }
             console.log("Ratings:");
             console.log(ratings);
 
-
-            /*
-             var criteria_by_pos = [];
-             for (i in $scope.crit_groups) if ($scope.crit_groups.hasOwnProperty(i)) {
-             for (j in $scope.crit_groups[i]["criteria"]) if ($scope.crit_groups[i]["criteria"].hasOwnProperty(j)) {
-             ratings[$scope.crit_groups[i]["criteria"][j]["id"]] = {};
-             }
-             }
-
-
-             criteria_by_pos = {},
-            for (i in criteria_by_id) if (criteria_by_id.hasOwnProperty(i)) {
-                crit = criteria_by_id[i];
-                if (typeof(criteria_by_pos[crit["group_id"]]) == "undefined") criteria_by_pos[crit["group_id"]] = {
-                    "group_id": crit["group_id"],
-                    "crits": {}
-                };
-                criteria_by_pos[crit["group_id"]]["crits"][crit["order"]] = crit;
+            for (i in ratings) if (ratings.hasOwnProperty(i)) {
+                var sum = 0, cnt = 0;
+                rating_warnings[i] = {};
+                for (var j in ratings[i]) if (ratings[i].hasOwnProperty(j)) {
+                    cnt++;
+                    sum += parseInt(ratings[i][j]);
+                }
+                if (cnt >= 0) {
+                    var avg = sum / cnt;
+                    console.log("Avg: " + avg);
+                    for (j in ratings[i]) if (ratings[i].hasOwnProperty(j)) {
+                        var diff = parseInt(ratings[i][j]) - avg;
+                        if (diff <= -2 || diff >= 2) rating_warnings[i][j] = true;
+                    }
+                }
             }
-             $scope.criteria = criteria_by_pos;
-            */
+            console.log(rating_warnings);
 
             $scope.adjucators = adjucators_by_id;
             $scope.ratings = ratings;
+            $scope.rating_warnings = rating_warnings;
         };
 
         var load_rating_table = function () {

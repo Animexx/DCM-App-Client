@@ -77,6 +77,33 @@
     font-style: italic;
 }
 
+.participant_rating_table .warning {
+    background-color: yellow;
+}
+
+
+
+.participant_overview_ratings {
+    position: relative;
+}
+
+.participant_overview_ratings .auftritt_holder {
+    position: absolute;
+    display: block;
+    z-index: 10;
+    bottom: 45px;
+    left: 50%;
+    margin-left: -50px;
+}
+
+.participant_overview_ratings  .kostuem_button {
+    float: left;
+}
+.participant_overview_ratings > .col:last-child .kostuem_button {
+    float: right;
+}
+
+
 .rating_radio {
     display: inline-block;
     width: 40px;

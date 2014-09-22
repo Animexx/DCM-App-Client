@@ -2,14 +2,64 @@ angular.module('starter.services', ['ngResource'])
     .factory('RatingCalcService', [function () {
         var CRITERIA = [
             {
-                "name": "Teilnehmer 1: Kostüm",
+                "name": "Auftritt",
                 "group_id": 0,
+                "weight_base": 2,
+                "criteria": [
+                    {
+                        "id": 9,
+                        "name": "Gesamteindruck",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 4,
+                        "group_leader": true
+                    },
+                    {
+                        "id": 10,
+                        "name": "Darstellung",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 11,
+                        "name": "Auftrittsidee",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 12,
+                        "name": "Vertonung/Text",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 13,
+                        "name": "Material",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 14,
+                        "name": "Publikum",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    }
+                ]
+            },
+            {
+                "name": "Teilnehmer 1: Kostüm",
+                "group_id": 1,
+                "weight_base": 1,
                 "criteria": [
                     {
                         "id": 1,
                         "name": "Gesamteindruck",
                         "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 4,
+                        "weight_base": 5,
                         "group_leader": true
                     },
                     {
@@ -64,62 +114,15 @@ angular.module('starter.services', ['ngResource'])
                 ]
             },
             {
-                "name": "Teilnehmer 1: Auftritt",
-                "group_id": 1,
-                "criteria": [
-                    {
-                        "id": 9,
-                        "name": "Gesamteindruck",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 3,
-                        "group_leader": true
-                    },
-                    {
-                        "id": 10,
-                        "name": "Darstellung",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 11,
-                        "name": "Auftrittsidee",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 12,
-                        "name": "Vertonung/Text",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 13,
-                        "name": "Material",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 14,
-                        "name": "Publikum",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    }
-                ]
-            },
-            {
                 "name": "Teilnehmer 2: Kostüm",
                 "group_id": 2,
+                "weight_base": 1,
                 "criteria": [
                     {
                         "id": 15,
                         "name": "Gesamteindruck",
                         "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 4,
+                        "weight_base": 5,
                         "group_leader": true
                     },
                     {
@@ -172,54 +175,6 @@ angular.module('starter.services', ['ngResource'])
                         "group_leader": false
                     }
                 ]
-            },
-            {
-                "name": "Teilnehmer 2: Auftritt",
-                "group_id": 3,
-                "criteria": [
-                    {
-                        "id": 23,
-                        "name": "Gesamteindruck",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 3,
-                        "group_leader": true
-                    },
-                    {
-                        "id": 24,
-                        "name": "Darstellung",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 25,
-                        "name": "Auftrittsidee",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 26,
-                        "name": "Vertonung/Text",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 27,
-                        "name": "Material",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    },
-                    {
-                        "id": 28,
-                        "name": "Publikum",
-                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
-                        "weight_base": 1,
-                        "group_leader": false
-                    }
-                ]
             }
         ];
 
@@ -267,7 +222,9 @@ angular.module('starter.services', ['ngResource'])
                         }
                     }
 
-                    overall_score += groups_scores[i];
+                    console.log(groups_scores[i] + " / " + CRITERIA[i]["weight_base"]);
+
+                    overall_score += (CRITERIA[i]["weight_base"] * groups_scores[i]);
                     groups_complete[i] = complete;
                 }
                 return {
