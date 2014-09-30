@@ -299,6 +299,13 @@ angular.module('starter.services', ['ngResource'])
         }
     }])
 
+    .factory('UserService', ['$resource',
+        function ($resource) {
+            return $resource(window.DCM_REST_BASE + 'user/:userId', {}, {
+                query: {method: 'GET', params: {}, isArray: false}
+            });
+        }])
+
     .factory('CompetitionService', ['$resource',
         function ($resource) {
             return $resource(window.DCM_REST_BASE + 'group/:competitionGroupId/competition/:competitionId', {}, {

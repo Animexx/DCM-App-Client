@@ -29,11 +29,13 @@ angular.module('starter.controllers', [])
         }
     })
 
-    .controller('CompetitionCtrl', function ($scope, $stateParams, CompetitionService, ParticipantService, ParticipantRatingService, LoginService) {
+    .controller('CompetitionCtrl', function ($scope, $stateParams, CompetitionService, ParticipantService, ParticipantRatingService, LoginService, UserService) {
         $scope.competition = CompetitionService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId
         });
+
+        var x = UserService.get();
 
         var set_rated = function (ratings) {
             console.log("======== " + ratings["participant_id"]);
