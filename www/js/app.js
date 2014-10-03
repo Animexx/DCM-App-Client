@@ -63,6 +63,26 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
                 }
             })
 
+            .state('tab.competition_admin', {
+                url: '/competitions/:competitionId/administration',
+                views: {
+                    'tab-competitions': {
+                        templateUrl: 'templates/competition-administration.html',
+                        controller: 'CompetitionAdministrationCtrl'
+                    }
+                }
+            })
+
+            .state('tab.competition_admin_adjucator', {
+                url: '/competitions/:competitionId/administration/:adjucatorId',
+                views: {
+                    'tab-competitions': {
+                        templateUrl: 'templates/competition-administration-adjucator.html',
+                        controller: 'CompetitionAdministrationAdjucatorCtrl'
+                    }
+                }
+            })
+
             .state('tab.participant', {
                 url: '/competitions/:competitionId/participant/:participantId',
                 views: {

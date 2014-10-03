@@ -1,0 +1,38 @@
+<ion-view title="Administration">
+    <ion-content data-has-header="true" padding="true">
+
+        <h2>Juroren / Benutzer</h2>
+        <ion-list>
+            <ion-item data-ng-repeat="adjucator in adjucators" data-type="item-text-wrap" data-href="#/tab/competitions/{{competition.id}}/administration/{{adjucator.adjucator_id}}">
+                {{adjucator.username}}
+            </ion-item>
+        </ion-list>
+
+        <h2>Juror / Benutzer anlegen</h2>
+
+        <form class="list">
+            <label class="item item-input">
+                <span class="input-label">Benutzername</span>
+                <input type="text" data-ng-model="new_user.username">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Passwort</span>
+                <input type="password" data-ng-model="new_user.password">
+            </label>
+
+            <div class="item item-checkbox">
+                <label class="checkbox">
+                    <input type="checkbox" data-ng-model="new_user.is_adjucator">
+                </label>
+                Kann abstimmen
+            </div>
+            <div style="text-align: center;">
+                <button class="button button-positive" data-ng-click="doCreateUser(new_user.username, new_user.password, new_user.is_adjucator)">
+                    Anlegen
+                </button>
+            </div>
+        </form>
+
+
+    </ion-content>
+</ion-view>
