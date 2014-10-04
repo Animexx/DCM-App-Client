@@ -39,7 +39,6 @@ angular.module('starter.controllers', [])
         var x = UserService.get();
 
         var set_rated = function (ratings) {
-            console.log("======== " + ratings["participant_id"]);
             var all_set = true;
             var none_set = true;
             for (var i in ratings.ratings) if (ratings.ratings.hasOwnProperty(i)) {
@@ -81,13 +80,26 @@ angular.module('starter.controllers', [])
         });
         $scope.admin = 1; // @TODO
 
-        var loadAdjucatorList = function() {
+        var loadAdjucatorList = function () {
             AdjucatorService.query({
                 competitionGroupId: window.DCM_COMPETITION_GROUP,
                 competitionId: $stateParams.competitionId
             }).$promise.then(function (adjucator_list) {
-                    $scope.adjucators = adjucator_list._embedded.competition_adjucator;
-                    console.log($scope.adjucators);
+                    adjucator_list = adjucator_list._embedded.competition_adjucator;
+
+                    var adjucator_ids = [];
+                    for (var i in adjucator_list) if (adjucator_list.hasOwnProperty(i)) {
+                        adjucator_ids.push(parseInt(adjucator_list[i]["adjucator_id"]));
+                    }
+
+                    UserService.query().$promise.then(function (users) {
+                        users = users._embedded.user;
+                        for (i in users) if (users.hasOwnProperty(i)) {
+                            users[i]["is_adjucator"] = (adjucator_ids.indexOf(parseInt(users[i]["id"])) >= 0);
+                        }
+                        console.log(users);
+                        $scope.users = users;
+                    });
                 });
         };
         loadAdjucatorList();
@@ -101,7 +113,7 @@ angular.module('starter.controllers', [])
                 "username": username,
                 "password": password
             }).$save();
-            newuser.then(function(user) {
+            newuser.then(function (user) {
                 if (is_adjucator) {
                     var adj_obj = new AdjucatorService({});
                     adj_obj.adjucator_id = user.id;
@@ -128,24 +140,58 @@ angular.module('starter.controllers', [])
     })
 
 
-    .controller('CompetitionAdministrationAdjucatorCtrl', function ($scope, $stateParams, CompetitionService, AdjucatorService, UserService) {
+    .controller('CompetitionAdministrationAdjucatorCtrl', function ($scope, $location, $stateParams, CompetitionService, AdjucatorService, UserService) {
         $scope.competition = CompetitionService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId
         });
         $scope.admin = 1; // @TODO
+
+        var adjucator_obj = null;
         AdjucatorService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId,
             adjucatorId: $stateParams.adjucatorId
-        }).$promise.then(function(adj) {
-            console.log(adj);
-            $scope.is_adjucator = (typeof(adj.adjucator_id) != "undefined");
-            console.log($scope.is_adjucator);
-        });
-        $scope.user = UserService.get({
+        }).$promise.then(function (adj) {
+                adjucator_obj = adj;
+                console.log(adj);
+                $scope.is_adjucator = (typeof(adj.adjucator_id) != "undefined");
+                console.log($scope.is_adjucator);
+            });
+        var user = UserService.get({
             userId: $stateParams.adjucatorId
         });
+        $scope.user = user;
+
+        $scope.doUpdateUser = function (username, password_new, is_adjucator) {
+            user.username = username;
+            if (password_new != "") user.password = password_new;
+
+            user.$save().then(function (new_user) {
+                if (is_adjucator) {
+                    var adj_obj = new AdjucatorService({});
+                    adj_obj.adjucator_id = user.id;
+                    adj_obj.competition_id = $scope.competition.id;
+                    adj_obj.username = username;
+                    var adj = adj_obj.$save({
+                        "competitionGroupId": window.DCM_COMPETITION_GROUP,
+                        "competitionId": $scope.competition.id
+                    });
+                    adj.then(function () {
+                        $location.path("/tab/competitions/" + $stateParams.competitionId + "/administration");
+                    });
+                } else {
+                    adjucator_obj.$delete({
+                        "competitionGroupId": window.DCM_COMPETITION_GROUP,
+                        "competitionId": $scope.competition.id,
+                        "adjucatorId": user.id
+                    }).then(function() {
+                        $location.path("/tab/competitions/" + $stateParams.competitionId + "/administration");
+                    });
+                }
+
+            });
+        }
     })
 
     .controller('ParticipantOverviewCtrl', function ($scope, $stateParams, CompetitionService, ParticipantService, ParticipantRatingService, LoginService, RatingCalcService) {
