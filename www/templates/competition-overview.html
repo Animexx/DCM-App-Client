@@ -1,16 +1,10 @@
 <ion-view title="{{competition.name}}">
     <ion-content has-header="true" padding="true">
 
-        <div data-ng-switch data-on="admin">
-            <div data-ng-switch-when="1">
-                <div style="float: right;">
-                    <a class="button button-balanced icon-right ion-chevron-right" href="#/tab/competitions/{{competition.id}}/administration">
-                        Administration
-                    </a>
-                </div>
-            </div>
-            <div data-ng-switch-default>
-            </div>
+        <div style="float: right;" data-ng-show="is_sysadmin">
+            <a class="button button-balanced icon-right ion-chevron-right" href="#/competitions/{{competition.id}}/administration">
+                Administration
+            </a>
         </div>
 
 
@@ -19,14 +13,12 @@
         <br><br>
 
 
-
-
         <h2>TeilnehmerInnen</h2>
 
         <br style="clear: both;">
 
         <ion-list>
-            <ion-item ng-repeat="participant in participants" type="item-text-wrap" href="#/tab/competitions/{{competition.id}}/participant/{{participant.user_id}}">
+            <ion-item ng-repeat="participant in participants" type="item-text-wrap" href="#/competitions/{{competition.id}}/participant/{{participant.user_id}}">
                 {{participant.name}}
 
                 <div data-ng-switch data-on="participant.i_rated">

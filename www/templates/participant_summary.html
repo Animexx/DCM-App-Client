@@ -2,7 +2,7 @@
     <ion-content data-has-header="true" padding="true">
 
         <table class="participant_rating_table" data-ng-repeat="crit_group in crit_groups">
-            <caption>{{crit_group.name}}</caption>
+            <caption>{{crit_group.name}} <small style="font-size: 14px;">x {{crit_group.weight_base}}</small></caption>
             <thead>
             <tr>
                 <th class="lo"></th>
@@ -19,8 +19,32 @@
                     </span>
                 </td>
             </tr>
+            <tr>
+                <th>Gesamt:</th>
+                <td data-ng-repeat="adjucator in adjucators" class="rating rating_group_score">
+                    {{group_scores_by_adjucator[crit_group.group_id][adjucator.adjucator_id]}}
+                </td>
+            </tr>
             </tbody>
         </table>
 
+
+        <table class="participant_rating_table">
+            <caption>Gesamtauswertung</caption>
+            <thead>
+            <tr>
+                <th class="lo"></th>
+                <th data-ng-repeat="adjucator in adjucators">{{adjucator.username}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th>&nbsp;</th>
+                <td data-ng-repeat="adjucator in adjucators" class="rating rating_group_score {{rating_complete[adjucator.adjucator_id] ? 'complete' : 'missing' }}">
+                    {{overall_scores[adjucator.adjucator_id]}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </ion-content>
 </ion-view>

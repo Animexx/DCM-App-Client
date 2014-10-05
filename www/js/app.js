@@ -34,92 +34,50 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
                 templateUrl: 'templates/login.html',
                 controller: 'LoginCtrl'
             })
-            // setup an abstract state for the tabs directive
-            .state('tab', {
-                url: "/tab",
-                abstract: true,
-                templateUrl: "templates/tabs.html"
-            })
 
-            // Each tab has its own nav history stack:
-
-            .state('tab.competitions', {
+            .state('competitions', {
                 url: '/competitions',
-                views: {
-                    'tab-competitions': {
-                        templateUrl: 'templates/tab-competitions.html',
-                        controller: 'CompetitionListCtrl'
-                    }
-                }
+                templateUrl: 'templates/tab-competitions.html',
+                controller: 'CompetitionListCtrl'
             })
 
-            .state('tab.competition', {
+            .state('competition', {
                 url: '/competitions/:competitionId',
-                views: {
-                    'tab-competitions': {
-                        templateUrl: 'templates/competition-overview.html',
-                        controller: 'CompetitionCtrl'
-                    }
-                }
+                templateUrl: 'templates/competition-overview.html',
+                controller: 'CompetitionCtrl'
             })
 
-            .state('tab.competition_admin', {
+            .state('competition_admin', {
                 url: '/competitions/:competitionId/administration',
-                views: {
-                    'tab-competitions': {
-                        templateUrl: 'templates/competition-administration.html',
-                        controller: 'CompetitionAdministrationCtrl'
-                    }
-                }
+                templateUrl: 'templates/competition-administration.html',
+                controller: 'CompetitionAdministrationCtrl'
             })
 
-            .state('tab.competition_admin_adjucator', {
+            .state('competition_admin_adjucator', {
                 url: '/competitions/:competitionId/administration/:adjucatorId',
-                views: {
-                    'tab-competitions': {
-                        templateUrl: 'templates/competition-administration-adjucator.html',
-                        controller: 'CompetitionAdministrationAdjucatorCtrl'
-                    }
-                }
+                templateUrl: 'templates/competition-administration-adjucator.html',
+                controller: 'CompetitionAdministrationAdjucatorCtrl'
             })
 
-            .state('tab.participant', {
+            .state('participant', {
                 url: '/competitions/:competitionId/participant/:participantId',
-                views: {
-                    'tab-competitions': {
-                        templateUrl: 'templates/participant-overview.html',
-                        controller: 'ParticipantOverviewCtrl'
-                    }
-                }
+                templateUrl: 'templates/participant-overview.html',
+                controller: 'ParticipantOverviewCtrl'
             })
 
-            .state('tab.participant_summary', {
+            .state('participant_summary', {
                 url: '/competitions/:competitionId/participant/:participantId/summary',
-                views: {
-                    'tab-competitions': {
-                        templateUrl: 'templates/participant_summary.html',
-                        controller: 'ParticipantSummaryCtrl'
-                    }
-                }
-            })
-
-            .state('tab.account', {
-                url: '/account',
-                views: {
-                    'tab-account': {
-                        templateUrl: 'templates/tab-account.html',
-                        controller: 'AccountCtrl'
-                    }
-                }
+                templateUrl: 'templates/participant_summary.html',
+                controller: 'ParticipantSummaryCtrl'
             });
 
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise(function() {
-            return '/tab/competitions';
+        $urlRouterProvider.otherwise(function () {
+            return '/competitions';
         });
 
-    }).run(function($rootScope, $location, LoginService) {
-        $rootScope.$on('$locationChangeStart', function(event, nextLoc, currentLoc) {
+    }).run(function ($rootScope, $location, LoginService) {
+        $rootScope.$on('$locationChangeStart', function (event, nextLoc, currentLoc) {
             if ($location.path() != "/login" && !LoginService.isLoggedIn()) {
                 $location.path('/login');
             }

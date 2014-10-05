@@ -3,7 +3,7 @@
 
         <h2>Juroren / Benutzer</h2>
         <ion-list>
-            <ion-item data-ng-repeat="user in users" data-type="item-text-wrap" data-href="#/tab/competitions/{{competition.id}}/administration/{{user.id}}">
+            <ion-item data-ng-repeat="user in users" data-type="item-text-wrap" data-href="#/competitions/{{competition.id}}/administration/{{user.id}}">
                 <div style="float: right; color: green;" data-ng-show="{{user.is_adjucator}}">
                     Juror
                 </div>

@@ -81,7 +81,16 @@
     background-color: yellow;
 }
 
-
+.participant_rating_table .rating_group_score {
+    font-weight: bold;
+    border-top: solid 1px lightgray;
+}
+.participant_rating_table .rating_group_score.complete {
+    background-color: lightgreen;
+}
+.participant_rating_table .rating_group_score.missing {
+    background-color: orange;
+}
 
 .participant_overview_ratings {
     position: relative;

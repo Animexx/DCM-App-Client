@@ -29,14 +29,12 @@ angular.module('starter.controllers', [])
         }
     })
 
-    .controller('CompetitionCtrl', function ($scope, $stateParams, CompetitionService, ParticipantService, ParticipantRatingService, LoginService, UserService) {
+    .controller('CompetitionCtrl', function ($scope, $stateParams, CompetitionService, ParticipantService, ParticipantRatingService, LoginService) {
         $scope.competition = CompetitionService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId
         });
-        $scope.admin = 1; // @TODO
-
-        var x = UserService.get();
+        $scope.is_sysadmin = LoginService.isSysadmin();
 
         var set_rated = function (ratings) {
             var all_set = true;
@@ -73,12 +71,12 @@ angular.module('starter.controllers', [])
     })
 
 
-    .controller('CompetitionAdministrationCtrl', function ($scope, $stateParams, CompetitionService, AdjucatorService, UserService) {
+    .controller('CompetitionAdministrationCtrl', function ($scope, $stateParams, CompetitionService, AdjucatorService, UserService, LoginService) {
         $scope.competition = CompetitionService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId
         });
-        $scope.admin = 1; // @TODO
+        $scope.is_sysadmin = LoginService.isSysadmin();
 
         var loadAdjucatorList = function () {
             AdjucatorService.query({
@@ -140,12 +138,12 @@ angular.module('starter.controllers', [])
     })
 
 
-    .controller('CompetitionAdministrationAdjucatorCtrl', function ($scope, $location, $stateParams, CompetitionService, AdjucatorService, UserService) {
+    .controller('CompetitionAdministrationAdjucatorCtrl', function ($scope, $location, $stateParams, CompetitionService, AdjucatorService, UserService, LoginService) {
         $scope.competition = CompetitionService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
             competitionId: $stateParams.competitionId
         });
-        $scope.admin = 1; // @TODO
+        $scope.is_sysadmin = LoginService.isSysadmin();
 
         var adjucator_obj = null;
         AdjucatorService.get({
@@ -178,7 +176,7 @@ angular.module('starter.controllers', [])
                         "competitionId": $scope.competition.id
                     });
                     adj.then(function () {
-                        $location.path("/tab/competitions/" + $stateParams.competitionId + "/administration");
+                        $location.path("/competitions/" + $stateParams.competitionId + "/administration");
                     });
                 } else {
                     adjucator_obj.$delete({
@@ -186,7 +184,7 @@ angular.module('starter.controllers', [])
                         "competitionId": $scope.competition.id,
                         "adjucatorId": user.id
                     }).then(function() {
-                        $location.path("/tab/competitions/" + $stateParams.competitionId + "/administration");
+                        $location.path("/competitions/" + $stateParams.competitionId + "/administration");
                     });
                 }
 
@@ -194,7 +192,8 @@ angular.module('starter.controllers', [])
         }
     })
 
-    .controller('ParticipantOverviewCtrl', function ($scope, $stateParams, CompetitionService, ParticipantService, ParticipantRatingService, LoginService, RatingCalcService) {
+    .controller('ParticipantOverviewCtrl', function ($scope, $stateParams, CompetitionService, ParticipantService, ParticipantRatingService, LoginService,
+                                                     RatingCalcService, AdjucatorService) {
         var ratings_obj = null;
 
         $scope.ratings = {};
@@ -203,11 +202,13 @@ angular.module('starter.controllers', [])
         $scope.rating_groups_scores = {};
         $scope.rating_groups_complete = {};
         $scope.rating_team_score = 0;
-        $scope.admin = 1; // @TODO
+        $scope.is_sysadmin = LoginService.isSysadmin();
         $scope.participantId = $stateParams.participantId;
         $scope.competitionId = $stateParams.competitionId;
 
         var set_ratings2scope = function () {
+            console.log("RATINGS:");
+            console.log($scope.ratings);
             var data = RatingCalcService.getRatingScores($scope.ratings);
             $scope.rating_groups_weights = data["groups_weights"];
             $scope.rating_groups_scores = data["groups_scores"];
@@ -216,6 +217,15 @@ angular.module('starter.controllers', [])
             $scope.all_complete = true;
             for (var i in data["groups_complete"]) if (data["groups_complete"].hasOwnProperty(i) && !data["groups_complete"][i]) $scope.all_complete = false;
         };
+
+        AdjucatorService.get({
+            competitionGroupId: window.DCM_COMPETITION_GROUP,
+            competitionId: $stateParams.competitionId,
+            adjucatorId: LoginService.currentUserId()
+        }).$promise.then(function (adj) {
+                console.log(adj);
+                $scope.is_adjucator = (typeof(adj.adjucator_id) != "undefined");
+            });
 
         ParticipantService.get({
             competitionGroupId: window.DCM_COMPETITION_GROUP,
@@ -313,54 +323,66 @@ angular.module('starter.controllers', [])
                     rating_group_names[i * 2 + 0] = members[i]["Name"] + ": Kostüm";
                     rating_group_names[i * 2 + 1] = members[i]["Name"] + ": Auftritt";
                 }
-                console.log("Participant");
-                console.log(part);
                 $scope.crit_group_names = rating_group_names;
-                console.log(rating_group_names);
             });
 
-        var build_rating_table = function (adjucators, ratings_unsorted) {
+
+        var build_rating_table = function (adjucators, ratings_by_adjucator) {
             var adjucators_by_id = {},
                 ratings = {},
                 rating_warnings = {},
-                i;
+                group_scores_by_adjucator = {},
+                overall_scores = {},
+                rating_complete = {},
+                i, j;
 
             for (i in adjucators) if (adjucators.hasOwnProperty(i)) {
                 adjucators_by_id[adjucators[i]["adjucator_id"]] = adjucators[i];
             }
+            for (i in $scope.crit_groups) if ($scope.crit_groups.hasOwnProperty(i)) {
+                group_scores_by_adjucator[$scope.crit_groups[i]["group_id"]] = {};
+            }
 
-            for (i in ratings_unsorted) if (ratings_unsorted.hasOwnProperty(i)) {
-                for (var crit_id in ratings_unsorted[i].ratings) if (ratings_unsorted[i].ratings.hasOwnProperty(crit_id)) {
-                    if (ratings_unsorted[i].ratings[crit_id] != 0) {
+            for (i in ratings_by_adjucator) if (ratings_by_adjucator.hasOwnProperty(i)) {
+                var adjucator = ratings_by_adjucator[i];
+                for (var crit_id in adjucator.ratings) if (adjucator.ratings.hasOwnProperty(crit_id)) {
+                    if (adjucator.ratings[crit_id] != 0) {
                         if (typeof(ratings[crit_id]) == "undefined") ratings[crit_id] = {};
-                        ratings[crit_id][ratings_unsorted[i].adjucator_id] = ratings_unsorted[i].ratings[crit_id];
+                        ratings[crit_id][adjucator.adjucator_id] = adjucator.ratings[crit_id];
                     }
                 }
+                var calcdata = RatingCalcService.getRatingScores(adjucator.ratings);
+                console.log(calcdata);
+                overall_scores[adjucator.adjucator_id] = calcdata["overall_score"];
+                for (j in calcdata["groups_complete"]) if (calcdata["groups_complete"].hasOwnProperty(j)) {
+                    rating_complete[adjucator.adjucator_id] = calcdata["groups_complete"][j];
+                }
+                for (j in calcdata["groups_scores"]) if (calcdata["groups_scores"].hasOwnProperty(j)) {
+                    group_scores_by_adjucator[j][adjucator.adjucator_id] = calcdata["groups_scores"][j];
+                }
             }
-            console.log("Ratings:");
-            console.log(ratings);
-
             for (i in ratings) if (ratings.hasOwnProperty(i)) {
                 var sum = 0, cnt = 0;
                 rating_warnings[i] = {};
-                for (var j in ratings[i]) if (ratings[i].hasOwnProperty(j)) {
+                for (j in ratings[i]) if (ratings[i].hasOwnProperty(j)) {
                     cnt++;
                     sum += parseInt(ratings[i][j]);
                 }
                 if (cnt >= 0) {
                     var avg = sum / cnt;
-                    console.log("Avg: " + avg);
                     for (j in ratings[i]) if (ratings[i].hasOwnProperty(j)) {
                         var diff = parseInt(ratings[i][j]) - avg;
                         if (diff <= -2 || diff >= 2) rating_warnings[i][j] = true;
                     }
                 }
             }
-            console.log(rating_warnings);
 
             $scope.adjucators = adjucators_by_id;
             $scope.ratings = ratings;
             $scope.rating_warnings = rating_warnings;
+            $scope.group_scores_by_adjucator = group_scores_by_adjucator;
+            $scope.overall_scores = overall_scores;
+            $scope.rating_complete = rating_complete;
         };
 
         var load_rating_table = function () {
@@ -375,9 +397,18 @@ angular.module('starter.controllers', [])
                             competitionId: $stateParams.competitionId,
                             participantId: $stateParams.participantId
                         }).$promise.then(function (ratings) {
+                                var adjucator_ids = [],
+                                    valid_ratings = [];
+                                for (var i in adjucator_list._embedded.competition_adjucator) if (adjucator_list._embedded.competition_adjucator.hasOwnProperty(i)) {
+                                    adjucator_ids.push(adjucator_list._embedded.competition_adjucator[i].adjucator_id);
+                                }
+                                for (i in ratings._embedded.competition_rating) if (ratings._embedded.competition_rating.hasOwnProperty(i)) {
+                                    var votes = ratings._embedded.competition_rating[i];
+                                    if (adjucator_ids.indexOf(votes["adjucator_id"]) >= 0) valid_ratings.push(votes);
+                                }
                                 build_rating_table(
                                     adjucator_list._embedded.competition_adjucator,
-                                    ratings._embedded.competition_rating
+                                    valid_ratings
                                 )
                             });
                     }

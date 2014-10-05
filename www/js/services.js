@@ -245,7 +245,8 @@ angular.module('starter.services', ['ngResource'])
     .factory('LoginService', ['Base64', '$http', '$location', function (Base64, $http, $location) {
         var currentUsername = (typeof(localStorage.dcm_username) != "undefined" ? localStorage.dcm_username : null),
             currentPassword = (typeof(localStorage.dcm_password) != "undefined" ? localStorage.dcm_password : null),
-            currentId = (typeof(localStorage.dcm_user_id) != "undefined" ? localStorage.dcm_user_id : null);
+            currentId = (typeof(localStorage.dcm_user_id) != "undefined" ? localStorage.dcm_user_id : null),
+            currSysadmin = (typeof(localStorage.dcm_sysadmin) != "undefined" ? localStorage.dcm_sysadmin : false);
 
         if (currentUsername && currentPassword && currentId) {
             var encoded = Base64.encode(currentUsername + ':' + currentPassword);
@@ -257,6 +258,7 @@ angular.module('starter.services', ['ngResource'])
                 localStorage.dcm_username = currentUsername = username;
                 localStorage.dcm_password = currentPassword = password;
                 localStorage.dcm_user_id = null;
+                localStorage.dcm_sysadmin = currSysadmin = false;
 
                 var encoded = Base64.encode(username + ':' + password);
                 $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
@@ -265,6 +267,7 @@ angular.module('starter.services', ['ngResource'])
                     localStorage.dcm_username = currentUsername = null;
                     localStorage.dcm_password = currentPassword = null;
                     localStorage.dcm_user_id = currentId = null;
+                    localStorage.dcm_sysadmin = currSysadmin = false;
                     $location.path('/');
                     alert("Ein Fehler beim Login");
                 };
@@ -278,6 +281,7 @@ angular.module('starter.services', ['ngResource'])
                     var ret = data["data"];
                     if (ret["success"]) {
                         localStorage.dcm_user_id = currentId = ret["id"];
+                        localStorage.dcm_sysadmin = currSysadmin = (ret["sysadmin"] == 1);
                     } else {
                         onFail();
                     }
@@ -286,6 +290,7 @@ angular.module('starter.services', ['ngResource'])
             logout: function () {
                 currentUsername = localStorage.dcm_username = null;
                 currentPassword = localStorage.dcm_password = null;
+                currSysadmin = localStorage.dcm_sysadmin = false;
             },
             isLoggedIn: function () {
                 return (currentUsername !== null && currentPassword !== null);
@@ -295,6 +300,9 @@ angular.module('starter.services', ['ngResource'])
             },
             currentUserId: function () {
                 return currentId;
+            },
+            isSysadmin: function () {
+                return currSysadmin;
             }
         }
     }])
@@ -377,10 +385,10 @@ angular.module('starter.services', ['ngResource'])
                     }
 
                     output = output +
-                        keyStr.charAt(enc1) +
-                        keyStr.charAt(enc2) +
-                        keyStr.charAt(enc3) +
-                        keyStr.charAt(enc4);
+                    keyStr.charAt(enc1) +
+                    keyStr.charAt(enc2) +
+                    keyStr.charAt(enc3) +
+                    keyStr.charAt(enc4);
                     chr1 = chr2 = chr3 = "";
                     enc1 = enc2 = enc3 = enc4 = "";
                 } while (i < input.length);
@@ -398,8 +406,8 @@ angular.module('starter.services', ['ngResource'])
                 var base64test = /[^A-Za-z0-9\+\/\=]/g;
                 if (base64test.exec(input)) {
                     alert("There were invalid base64 characters in the input text.\n" +
-                        "Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
-                        "Expect errors in decoding.");
+                    "Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
+                    "Expect errors in decoding.");
                 }
                 input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
 
