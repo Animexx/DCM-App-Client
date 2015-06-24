@@ -2,6 +2,9 @@
     <ion-content has-header="true" padding="true">
 
         <div style="float: right;" data-ng-show="is_sysadmin">
+            <a class="button button-balanced" href="#/competitions/{{competition.id}}/adminoverview">
+                Gesamtübersicht
+            </a>
             <a class="button button-balanced icon-right ion-chevron-right" href="#/competitions/{{competition.id}}/administration">
                 Administration
             </a>
@@ -19,7 +22,8 @@
 
         <ion-list>
             <ion-item ng-repeat="participant in participants" type="item-text-wrap" href="#/competitions/{{competition.id}}/participant/{{participant.user_id}}">
-                {{participant.name}}
+                {{participant.name}}:
+                {{participant.data.members[0].Charakter}} ({{participant.data.members[0].Herkunft}})
 
                 <div data-ng-switch data-on="participant.i_rated">
                     <div data-ng-switch-when="1">

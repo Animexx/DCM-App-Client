@@ -53,6 +53,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
                 controller: 'CompetitionAdministrationCtrl'
             })
 
+            .state('competition_adminoverview', {
+                url: '/competitions/:competitionId/adminoverview',
+                templateUrl: 'templates/competition-adminoverview.html',
+                controller: 'CompetitionAdminoverviewCtrl'
+            })
+
             .state('competition_admin_adjucator', {
                 url: '/competitions/:competitionId/administration/:adjucatorId',
                 templateUrl: 'templates/competition-administration-adjucator.html',

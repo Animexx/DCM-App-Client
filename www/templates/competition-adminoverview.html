@@ -1,0 +1,31 @@
+<ion-view title="Gesamtauswertung">
+    <ion-content data-has-header="true" padding="true">
+
+        <section data-ng-repeat="participant in participants">
+            <h2>{{participant.name}}</h2>
+
+            <table class="participant_rating_table">
+                <thead>
+                <tr>
+                    <th data-ng-repeat="adjucator in adjucators">{{adjucator.username}}</th>
+                    <td></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td data-ng-repeat="adjucator in adjucators" class="rating rating_group_score {{userRatings[participant.user_id][adjucator.adjucator_id]['overall_complete'] ? 'complete' : 'missing' }}">
+                        {{userRatings[participant.user_id][adjucator.adjucator_id]['overall_score']}}
+                    </td>
+                    <td style="width: 120px;">
+                        <a class="button button-balanced icon-right ion-chevron-right" href="#/competitions/{{competition.id}}/participant/{{participant.user_id}}/summary">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+    </ion-content>
+</ion-view>

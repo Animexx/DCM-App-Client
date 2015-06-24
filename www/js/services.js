@@ -1,4 +1,187 @@
 angular.module('starter.services', ['ngResource'])
+
+    .factory('RatingCalcService', [function () {
+        var CRITERIA = [
+            {
+                "name": "Auftritt",
+                "group_id": 0,
+                "weight_base": 1,
+                "criteria": [
+                    {
+                        "id": 9,
+                        "name": "Gesamteindruck",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 4,
+                        "group_leader": true
+                    },
+                    {
+                        "id": 10,
+                        "name": "Darstellung",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 11,
+                        "name": "Auftrittsidee",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 12,
+                        "name": "Vertonung/Text",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 13,
+                        "name": "Material",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 14,
+                        "name": "Publikum",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    }
+                ]
+            },
+            {
+                "name": "Teilnehmer 1: Kostüm",
+                "group_id": 1,
+                "weight_base": 1,
+                "criteria": [
+                    {
+                        "id": 1,
+                        "name": "Gesamteindruck",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 5,
+                        "group_leader": true
+                    },
+                    {
+                        "id": 2,
+                        "name": "Näharbeiten",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 3,
+                        "name": "Bastelarbeiten",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 4,
+                        "name": "Frisur/MakeUp",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 5,
+                        "name": "Material",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 6,
+                        "name": "Proportionen",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 7,
+                        "name": "Farbgenauigkeit",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    },
+                    {
+                        "id": 8,
+                        "name": "Aufwand",
+                        "values": [1, 2, 3, 4, 5, 6, 7, 8],
+                        "weight_base": 1,
+                        "group_leader": false
+                    }
+                ]
+            }
+        ];
+
+        return {
+            getCriteria: function () {
+                return CRITERIA;
+            },
+
+            getCriteriaIDs: function () {
+                return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+            },
+
+            getRatingScores: function (crits) {
+                var groups_weights = {},
+                    groups_scores = {},
+                    groups_complete = {},
+                    overall_complete = true,
+                    overall_score = 0,
+                    i, j;
+
+                for (i in CRITERIA) if (CRITERIA.hasOwnProperty(i)) {
+                    var ignores = 0,
+                        weight = 0,
+                        complete = true;
+
+                    for (j in CRITERIA[i]["criteria"]) if (CRITERIA[i]["criteria"].hasOwnProperty(j)) {
+                        if (CRITERIA[i]["criteria"][j]["group_leader"]) {
+                            weight = CRITERIA[i]["criteria"][j]["weight_base"];
+                        } else {
+                            if (typeof(crits[CRITERIA[i]["criteria"][j]["id"]]) != "undefined" && crits[CRITERIA[i]["criteria"][j]["id"]] == -1) ignores++;
+                        }
+                    }
+                    groups_weights[i] = weight + ignores;
+
+                    groups_scores[i] = 0;
+                    for (j in CRITERIA[i]["criteria"]) if (CRITERIA[i]["criteria"].hasOwnProperty(j)) {
+                        if (typeof(crits[CRITERIA[i]["criteria"][j]["id"]]) == "undefined" || crits[CRITERIA[i]["criteria"][j]["id"]] == 0) {
+                            complete = false;
+                            continue;
+                        }
+                        var curr_rat = parseInt(crits[CRITERIA[i]["criteria"][j]["id"]]);
+                        if (CRITERIA[i]["criteria"][j]["group_leader"]) {
+                            groups_scores[i] += groups_weights[i] * curr_rat;
+                        } else {
+                            if (curr_rat >= 0) groups_scores[i] += curr_rat;
+                        }
+                    }
+
+                    overall_score += (CRITERIA[i]["weight_base"] * groups_scores[i]);
+                    if (!complete) overall_complete = false;
+                    groups_complete[i] = complete;
+                }
+                return {
+                    "groups_weights": groups_weights,
+                    "groups_scores": groups_scores,
+                    "groups_complete": groups_complete,
+                    "overall_complete": overall_complete,
+                    "overall_score": overall_score
+                };
+            },
+
+            calcGesamteindruckWeight: function (criteria, ratings) {
+                console.log(criteria);
+                console.log(ratings);
+            }
+        }
+    }])
+
+    /*
     .factory('RatingCalcService', [function () {
         var CRITERIA = [
             {
@@ -241,6 +424,7 @@ angular.module('starter.services', ['ngResource'])
             }
         }
     }])
+    */
 
     .factory('LoginService', ['Base64', '$http', '$location', function (Base64, $http, $location) {
         var currentUsername = (typeof(localStorage.dcm_username) != "undefined" ? localStorage.dcm_username : null),

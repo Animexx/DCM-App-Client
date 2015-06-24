@@ -13,6 +13,17 @@
                     </tr>
                 </table>
             </div>
+            <div>
+                <div style="display: inline-block; width: 33%; text-align: center;">
+                    <a href="/dcm2015/bilder/original/{{competitionId}}_{{participantId}}.png" target="_blank"><img src="/dcm2015/thumbnails/{{competitionId}}_{{participantId}}original_thumb.png" alt="Original"></a>
+                </div>
+                <div style="display: inline-block; width: 33%; text-align: center;">
+                    <a href="/dcm2015/bilder/detail/{{competitionId}}_{{participantId}}.png" target="_blank"><img src="/dcm2015/thumbnails/{{competitionId}}_{{participantId}}detail_thumb.png" alt="Detailbild"></a>
+                </div>
+                <div style="display: inline-block; width: 33%; text-align: center;">
+                    <a href="/dcm2015/bilder/farbreferenz/{{competitionId}}_{{participantId}}.png" target="_blank"><img src="/dcm2015/thumbnails/{{competitionId}}_{{participantId}}farbreferenz_thumb.png" alt="Farbreferenz"></a>
+                </div>
+            </div>
         </div>
 
         <div style="float: right;" data-ng-show="is_sysadmin">
@@ -26,12 +37,6 @@
         </button>
 
         <div class="row participant_overview_ratings">
-            <div class="auftritt_holder" data-ng-show="is_adjucator">
-                <button class="button {{ rating_groups_complete[group_auftritt] ? 'button-balanced' : 'button-energized' }}" style="float: left;"
-                        data-ng-click="setOpenedCritGroup(group_auftritt)">
-                    Auftritt ({{rating_groups_scores[group_auftritt]}})
-                </button>
-            </div>
             <div class="col" data-ng-repeat="member in members">
                 <div class="card">
                     <div class="item item-divider">
@@ -54,6 +59,12 @@
                         <br style="clear: both;">
                     </div>
                 </div>
+            </div>
+            <div class="auftritt_holder" data-ng-show="is_adjucator">
+                <button class="button {{ rating_groups_complete[group_auftritt] ? 'button-balanced' : 'button-energized' }}" style="float: left;"
+                        data-ng-click="setOpenedCritGroup(group_auftritt)">
+                    Auftritt ({{rating_groups_scores[group_auftritt]}})
+                </button>
             </div>
         </div>
 

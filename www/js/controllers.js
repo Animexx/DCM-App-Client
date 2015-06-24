@@ -56,7 +56,9 @@ angular.module('starter.controllers', [])
                 else {
                     $scope.participants = {};
                     for (var p in list._embedded.competition_participant) if (list._embedded.competition_participant.hasOwnProperty(p)) {
-                        var part = list._embedded.competition_participant[p];
+                        var part = list._embedded.competition_participant[p],
+                            partData = JSON.parse(part.data);
+                        part.data = partData;
                         $scope.participants[part.user_id] = part;
                         ParticipantRatingService.get({
                             competitionGroupId: window.DCM_COMPETITION_GROUP,
@@ -65,6 +67,76 @@ angular.module('starter.controllers', [])
                             adjucatorId: LoginService.currentUserId()
                         }).$promise.then(set_rated);
                     }
+                }
+            });
+
+    })
+
+
+    .controller('CompetitionAdminoverviewCtrl', function ($scope, $stateParams, CompetitionService, AdjucatorService, ParticipantService, ParticipantRatingService,
+                                                          LoginService, RatingCalcService) {
+        $scope.competition = CompetitionService.get({
+            competitionGroupId: window.DCM_COMPETITION_GROUP,
+            competitionId: $stateParams.competitionId
+        });
+        $scope.is_sysadmin = LoginService.isSysadmin();
+        $scope.userRatings = {};
+
+        ParticipantService.query({
+            competitionGroupId: window.DCM_COMPETITION_GROUP,
+            competitionId: $stateParams.competitionId
+        }).$promise.then(function (list) {
+                if (typeof(list._embedded) != "object") alert("Ein Fehler ist aufgetreten beim Laden der TeilnehmerInnenliste.");
+                else {
+                    $scope.participants = {};
+                    for (var p in list._embedded.competition_participant) if (list._embedded.competition_participant.hasOwnProperty(p)) {
+                        var part = list._embedded.competition_participant[p];
+                        $scope.participants[part.user_id] = part;
+                    }
+
+
+
+
+                    AdjucatorService.query({
+                        competitionGroupId: window.DCM_COMPETITION_GROUP,
+                        competitionId: $stateParams.competitionId
+                    }).$promise.then(function (adjucator_list) {
+                            if (typeof(adjucator_list._embedded) != "object") alert("Ein Fehler ist aufgetreten beim Laden der Bewerter.");
+                            else {
+                                $scope.adjucators = adjucator_list._embedded.competition_adjucator;
+                                var adjucator_ids = [];
+                                for (var i in adjucator_list._embedded.competition_adjucator) if (adjucator_list._embedded.competition_adjucator.hasOwnProperty(i)) {
+                                    adjucator_ids.push(adjucator_list._embedded.competition_adjucator[i].adjucator_id);
+                                }
+                                console.log($scope.adjucators, adjucator_ids);
+
+
+
+                                for (var p in list._embedded.competition_participant) if (list._embedded.competition_participant.hasOwnProperty(p)) {
+                                    var part = list._embedded.competition_participant[p];
+                                    $scope.userRatings[part.user_id] = {};
+
+                                    ParticipantRatingService.get({
+                                        competitionGroupId: window.DCM_COMPETITION_GROUP,
+                                        competitionId: $stateParams.competitionId,
+                                        participantId: part.user_id
+                                    }).$promise.then(function (ratings) {
+                                            var ratings2 = ratings._embedded.competition_rating;
+                                            for (i in ratings2) if (ratings2.hasOwnProperty(i)) {
+                                                var votes = ratings2[i],
+                                                    participantId = votes["participant_id"];
+
+                                                if (adjucator_ids.indexOf(votes["adjucator_id"]) >= 0) {
+                                                    var computed = RatingCalcService.getRatingScores(votes["ratings"]);
+                                                    console.log(computed);
+                                                    $scope.userRatings[participantId][votes["adjucator_id"]] = computed;
+                                                }
+                                            }
+                                        });
+                                }
+
+                            }
+                        });
                 }
             });
 
@@ -183,7 +255,7 @@ angular.module('starter.controllers', [])
                         "competitionGroupId": window.DCM_COMPETITION_GROUP,
                         "competitionId": $scope.competition.id,
                         "adjucatorId": user.id
-                    }).then(function() {
+                    }).then(function () {
                         $location.path("/competitions/" + $stateParams.competitionId + "/administration");
                     });
                 }
@@ -298,7 +370,7 @@ angular.module('starter.controllers', [])
         $scope.setOpenedCritGroup = function (group_id) {
             $scope.openedCritGroup = group_id;
         };
-        $scope.openedCritGroup = 0;
+        $scope.openedCritGroup = 1;
     })
 
     .controller('ParticipantSummaryCtrl', function ($scope, $interval, $stateParams, ParticipantService, CompetitionService, ParticipantRatingService, AdjucatorService, RatingCalcService) {
